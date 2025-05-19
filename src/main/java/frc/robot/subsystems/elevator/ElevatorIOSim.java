@@ -3,11 +3,13 @@ package frc.robot.subsystems.elevator;
 import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 import static frc.robot.subsystems.elevator.ElevatorConstants.ElevatorSimConstants.*;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -24,7 +26,7 @@ public class ElevatorIOSim implements ElevatorIO {
           MAXIMUM_HIGHT,
           MINIMUM_HIGHT,
           true,
-          0);
+          MINIMUM_HIGHT);
 
   // system control
   private final VoltageOut voltageRequest = new VoltageOut(0);
@@ -38,14 +40,46 @@ public class ElevatorIOSim implements ElevatorIO {
   private final boolean isBreakMode = true;
 
   public ElevatorIOSim() {
+    sim.setState(0, 0);
+    TalonFXConfiguration config = new TalonFXConfiguration();
+
+    // Set brake mode
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    // Invert if necessary
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    // Feedback config (use integrated sensor)
+    config.Feedback.SensorToMechanismRatio = 15; // gear ratio
+    config.Feedback.RotorToSensorRatio = 1.0; // default for Falcon integrated sensor
+
+    // Motion Magic config (tune these values as needed)
+    config.MotionMagic.MotionMagicCruiseVelocity = 1.0; // m/s
+    config.MotionMagic.MotionMagicAcceleration = 2.0; // m/s^2
+    config.MotionMagic.MotionMagicJerk = 100.0; // m/s^3 (optional)
+
+    // PID slot 0 for MotionMagic
+    config.Slot0.kP = 100.0;
+    config.Slot0.kI = 0.0;
+    config.Slot0.kD = 0.0;
+    config.Slot0.kV = 0.0; // Optional feedforward
+
+    // Current limiting (optional safety)
+    config.CurrentLimits.SupplyCurrentLimit = 40;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    rightMotor.getConfigurator().apply(config);
     leftMotor.setControl(followerRequest);
-    // TODO: configs
+    rightSimMotor.setSupplyVoltage(12);
+    leftSimMotor.setSupplyVoltage(12);
   }
 
   @Override
   public void updateInput(ElevatorIOInputs inputs) {
     // Feed applied voltage from Talon into sim
-    double motorVoltage = rightMotor.getMotorVoltage().getValueAsDouble();
+
+    double motorVoltage = rightSimMotor.getMotorVoltage();
+
     sim.setInputVoltage(motorVoltage);
     sim.update(0.02);
 
@@ -53,17 +87,20 @@ public class ElevatorIOSim implements ElevatorIO {
     double motorRPM =
         sim.getVelocityMetersPerSecond() / (2 * Math.PI * WHEEL_RADIUS) * GEAR_RATIO * 60;
     rightSimMotor.setRawRotorPosition(motorRotations);
-    rightSimMotor.setRotorVelocity(motorRPM);
+    rightSimMotor.setRotorVelocity(motorRPM / 60);
+    System.out.println(rightMotor.getVelocity());
+    System.out.println(rightMotor.getPosition());
 
-    inputs.MotorPosotion = Units.rotationsToRadians(motorRotations);
-    inputs.MotorVelocity = Units.rotationsPerMinuteToRadiansPerSecond(motorRPM);
+    inputs.MotorPosotion = Units.rotationsToRadians(rightMotor.getPosition().getValueAsDouble());
+    inputs.MotorVelocity =
+        Units.rotationsPerMinuteToRadiansPerSecond(rightMotor.getVelocity().getValueAsDouble());
     inputs.MotorVoltge = motorVoltage;
     inputs.MotorCurrent = sim.getCurrentDrawAmps();
   }
 
   @Override
   public void setVoltage(double voltage) {
-    rightMotor.setControl(voltageRequest.withOutput(voltage));
+    rightMotor.setVoltage(voltage);
   }
 
   @Override

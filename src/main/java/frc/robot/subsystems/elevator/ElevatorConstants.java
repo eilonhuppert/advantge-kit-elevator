@@ -21,10 +21,10 @@ public class ElevatorConstants {
     public static final TalonFXSimState leftSimMotor = leftMotor.getSimState();
 
     public static final int NUM_OF_MOTORS = 2;
-    public static final double GEAR_RATIO = 0.06666666666;
+    public static final double GEAR_RATIO = 15;
     public static final double MASS = 15; // kg
     public static final double WHEEL_RADIUS = 0.015; // meters
-    public static final double MAXIMUM_HIGHT = 3; // meters
-    public static final double MINIMUM_HIGHT = -2;
+    public static final double MAXIMUM_HIGHT = 10; // meters
+    public static final double MINIMUM_HIGHT = 0;
   }
 }
