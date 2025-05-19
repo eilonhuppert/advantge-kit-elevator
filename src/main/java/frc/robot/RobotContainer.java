@@ -4,13 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.flyWheel.FlyWheel;
+import frc.robot.subsystems.flyWheel.FlyWheelIOReal;
+import frc.robot.subsystems.flyWheel.FlyWheelIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,9 +20,12 @@ import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Elevator elevator =
-      Elevator.getInstance(Robot.isReal() ? new ElevatorIOTalonFX() : new ElevatorIOSim());
 
+  private final FlyWheel flyWheel =
+      FlyWheel.getInstance(
+          RobotBase.isReal()
+              ? new FlyWheelIOReal()
+              : new FlyWheelIOSim()); // TODO: add real flywheel
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController = new CommandXboxController(0);
 
@@ -41,8 +45,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().whileTrue(elevator.setVoltage(12));
-    m_driverController.b().whileTrue(elevator.setVoltage(-12));
+    m_driverController.a().whileTrue(flyWheel.setCurrent(60));
+    m_driverController.b().whileTrue(flyWheel.setVoltage(8));
+    m_driverController.y().whileTrue(flyWheel.setSpeed(5));
+    m_driverController.x().whileTrue(flyWheel.setSpeed(-5));
   }
 
   /**
