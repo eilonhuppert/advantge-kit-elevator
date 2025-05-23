@@ -47,8 +47,8 @@ public class RobotContainer {
   private void configureBindings() {
     m_driverController.a().whileTrue(flyWheel.setCurrent(60));
     m_driverController.b().whileTrue(flyWheel.setVoltage(8));
-    m_driverController.y().whileTrue(flyWheel.setSpeed(5));
-    m_driverController.x().whileTrue(flyWheel.setSpeed(-5));
+    m_driverController.y().whileTrue(flyWheel.setSpeed(10));
+    m_driverController.x().whileTrue(flyWheel.setSpeed(-10));
   }
 
   /**
