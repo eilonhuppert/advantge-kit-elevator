@@ -8,33 +8,39 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 
 public class ArmIOSim implements ArmIO {
-    private double pastVelocity = 0;
+  private double pastVelocity = 0;
 
-    public ArmIOSim() {
-        motor.getConfigurator().apply(config);
-    }
+  public ArmIOSim() {
+    motor.getConfigurator().apply(config);
+  }
 
-    @Override
-    public void updateInput(ArmIOInputs inputs) {
-        // update the system sim
-        simMotor.setSupplyVoltage(RobotController.getBatteryVoltage());
-        sim.setInputVoltage(motor.getMotorVoltage().getValueAsDouble());
-        sim.update(0.02);
+  @Override
+  public void updateInput(ArmIOInputs inputs) {
+    simMotor.setSupplyVoltage(RobotController.getBatteryVoltage());
+    sim.setInputVoltage(simMotor.getMotorVoltage());
+    sim.update(0.02);
 
-        // update the motor sim
-        pastVelocity = motor.getVelocity().getValueAsDouble();
-        simMotor.setRotorVelocity((sim.getVelocityRadPerSec() * GEAR_RATIO) / 2 / Math.PI); // math might be worng
-        simMotor.setRotorAcceleration((motor.getVelocity().getValueAsDouble() - pastVelocity) / 0.02);
+    // Calculate rotor position and velocity in rotations and RPS
+    double rotorPosition = (sim.getAngleRads() * GEAR_RATIO) / (2 * Math.PI);
+    double rotorVelocity = (sim.getVelocityRadPerSec() * GEAR_RATIO) / (2 * Math.PI);
 
-        // update the battery
-        RoboRioSim.setVInVoltage(
-                BatterySim.calculateDefaultBatteryLoadedVoltage(sim.getCurrentDrawAmps()));
+    // Set simulated motor values
+    simMotor.setRawRotorPosition(rotorPosition);
+    simMotor.setRotorVelocity(rotorVelocity);
 
-        // update the output values
-        inputs.ArmPosition = motor.getPosition().getValueAsDouble();
-        inputs.ArmVelocity = motor.getVelocity().getValueAsDouble();
-        inputs.ArmAcceleration = motor.getAcceleration().getValueAsDouble();
-        inputs.ArmCurrent = motor.getTorqueCurrent().getValueAsDouble();
-        inputs.ArmVoltage = motor.getMotorVoltage().getValueAsDouble();
-    }
+    // Compute acceleration
+    double acceleration = (rotorVelocity - pastVelocity) / 0.02;
+    pastVelocity = rotorVelocity;
+
+    // Update battery voltage
+    RoboRioSim.setVInVoltage(
+        BatterySim.calculateDefaultBatteryLoadedVoltage(sim.getCurrentDrawAmps()));
+
+    // Populate inputs from the motor (which now reflects the sim)
+    inputs.ArmPosition = motor.getPosition().getValueAsDouble();
+    inputs.ArmVelocity = motor.getVelocity().getValueAsDouble();
+    inputs.ArmAcceleration = acceleration;
+    inputs.ArmCurrent = motor.getTorqueCurrent().getValueAsDouble();
+    inputs.ArmVoltage = motor.getMotorVoltage().getValueAsDouble();
+  }
 }
