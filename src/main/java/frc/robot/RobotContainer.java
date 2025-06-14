@@ -41,10 +41,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().onTrue(arm.setVelocity(-5));
-    m_driverController.b().whileTrue(arm.setVoltage(12));
-    m_driverController.y().onTrue(arm.setPosition(0.5));
-    m_driverController.x().whileTrue(arm.setCurrent(-40));
+    // m_driverController.a().onTrue(arm.setVelocity(-5));
+    m_driverController.b().whileTrue(arm.setVoltage(1));
+    // m_driverController.y().onTrue(arm.setPosition(0.5));
+    m_driverController.x().whileTrue(arm.setCurrent(-10));
   }
 
   /**

@@ -62,11 +62,11 @@ public class ArmConstants {
 
     public static final double GEAR_RATIO = 5;
     public static final TalonFXConfiguration config = new TalonFXConfiguration();
-    public static final double JKG = 2; // todo: calculate with CAD
-    public static final double LEANGTH = 1; // todo: find with CAD
+    public static final double JKG = 0.039;
+    public static final double LEANGTH = 0.45;
     public static final double MIN_ANGLE = -100;
     public static final double MAX_ANGLE = 100;
-    public static final double STARTING_ANGLE = 0;
+    public static final double STARTING_ANGLE = -90;
 
     static { // todo: add soft limits
 
@@ -100,7 +100,7 @@ public class ArmConstants {
 
     public static final SingleJointedArmSim sim =
         new SingleJointedArmSim(
-            DCMotor.getFalcon500(3),
+            DCMotor.getFalcon500(1),
             GEAR_RATIO,
             JKG,
             LEANGTH,

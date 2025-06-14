@@ -6,12 +6,32 @@ import static frc.robot.subsystems.arm.ArmConstants.ArmSimConstants.*;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class ArmIOSim implements ArmIO {
   private double pastVelocity = 0;
+  private MechanismLigament2d arm;
 
   public ArmIOSim() {
     motor.getConfigurator().apply(config);
+    CreateMech2D();
+  }
+
+  void CreateMech2D() {
+    Mechanism2d mech = new Mechanism2d(3, 3);
+
+    MechanismRoot2d root = mech.getRoot("motor", 1.5, 0);
+
+    MechanismLigament2d line = root.append(new MechanismLigament2d("line", 1.5, 90));
+    arm =
+        line.append(new MechanismLigament2d("arm", LEANGTH, 360, 6, new Color8Bit(Color.kPurple)));
+
+    SmartDashboard.putData("Mech2d", mech);
   }
 
   @Override
@@ -42,5 +62,8 @@ public class ArmIOSim implements ArmIO {
     inputs.ArmAcceleration = acceleration;
     inputs.ArmCurrent = motor.getTorqueCurrent().getValueAsDouble();
     inputs.ArmVoltage = motor.getMotorVoltage().getValueAsDouble();
+
+    // updates Mechanism2d
+    arm.setAngle(inputs.ArmPosition * 360 - 90);
   }
 }
