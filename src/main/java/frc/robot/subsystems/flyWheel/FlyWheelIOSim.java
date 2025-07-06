@@ -13,7 +13,7 @@ public class FlyWheelIOSim implements FlyWheelIO {
   private final FlywheelSim sim = new FlywheelSim(PLANT, GEAR_BOX);
 
   public FlyWheelIOSim() {
-    //todo tune
+    // todo tune
     // Apply the configuration to the motor
     motor.getConfigurator().apply(config);
   }

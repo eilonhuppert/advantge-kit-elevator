@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.flyWheel.FlyWheel;
 import frc.robot.subsystems.flyWheel.FlyWheelIOReal;
 import frc.robot.subsystems.flyWheel.FlyWheelIOSim;
@@ -45,10 +46,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().whileTrue(flyWheel.setCurrent(60));
-    m_driverController.b().whileTrue(flyWheel.setVoltage(8));
-    m_driverController.y().whileTrue(flyWheel.setSpeed(10));
-    m_driverController.x().whileTrue(flyWheel.setSpeed(-10));
+    m_driverController.a().whileTrue(flyWheel.quasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController.b().whileTrue(flyWheel.quasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController.y().whileTrue(flyWheel.dynamic(SysIdRoutine.Direction.kForward));
+    m_driverController.x().whileTrue(flyWheel.dynamic(SysIdRoutine.Direction.kReverse));
+    m_driverController.rightBumper().whileTrue(flyWheel.setVoltage(3));
   }
 
   /**

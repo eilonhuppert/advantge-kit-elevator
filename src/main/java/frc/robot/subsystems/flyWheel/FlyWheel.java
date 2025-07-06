@@ -4,13 +4,29 @@
 
 package frc.robot.subsystems.flyWheel;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.subsystems.flyWheel.FlyWheelConstants.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
 
 public class FlyWheel extends SubsystemBase {
   private final FlyWheelIO io;
   private final FlyWheelIOInputsAutoLogged inputs = new FlyWheelIOInputsAutoLogged();
+  private SysIdRoutine sysIdRoutine =
+      new SysIdRoutine(
+          new SysIdRoutine.Config(
+              null,
+              null,
+              null, // Use default config
+              (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+          new SysIdRoutine.Mechanism(
+              (voltage) -> motor.setVoltage(voltage.in(Volts)),
+              null, // No log consumer, since data is recorded by AdvantageKit
+              this));
 
   // singelton
   private static FlyWheel instance;
@@ -63,5 +79,17 @@ public class FlyWheel extends SubsystemBase {
    */
   public Command setSpeed(double speed) {
     return startEnd(() -> io.setSpeed(speed), () -> io.stop());
+  }
+
+  public Command quasistatic(SysIdRoutine.Direction direction) {
+    return runOnce(
+        () -> {
+          sysIdRoutine.quasistatic(direction);
+          System.out.println("hello world");
+        });
+  }
+
+  public Command dynamic(SysIdRoutine.Direction direction) {
+    return startEnd(() -> sysIdRoutine.dynamic(direction), () -> io.stop());
   }
 }

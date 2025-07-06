@@ -14,7 +14,7 @@ import frc.robot.Constants;
 
 public class FlyWheelConstants {
   // motor settings
-  public static final int MOTOR_ID = 10;
+  public static final int MOTOR_ID = 1;
   public static final TalonFX motor = new TalonFX(MOTOR_ID, Constants.CAN_BUS_NAME);
 
   // more technical motor settings
@@ -25,38 +25,39 @@ public class FlyWheelConstants {
       new MotionMagicVelocityTorqueCurrentFOC(0);
   public static final TorqueCurrentFOC currentRequest = new TorqueCurrentFOC(0);
 
+
   public class FlyWheelRealConstants {
     public static final TalonFXConfiguration config = new TalonFXConfiguration();
+
     static {
 
-    // Set brake mode to hold position when no power is applied
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      // Set brake mode to hold position when no power is applied
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    // Invert motor direction if necessary
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      // Invert motor direction if necessary
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    // Set gear ratio: Sensor to mechanism and rotor to sensor
-    config.Feedback.SensorToMechanismRatio = 5; // Example gear ratio
-    config.Feedback.RotorToSensorRatio = 1.0; // Default for integrated sensor
+      // Set gear ratio: Sensor to mechanism and rotor to sensor
+      config.Feedback.SensorToMechanismRatio = 5; // Example gear ratio
+      config.Feedback.RotorToSensorRatio = 1.0; // Default for integrated sensor
 
-    // Configure PID gains for velocity control
-    config.Slot0.kP = 4; // Example value, tune as needed
-    config.Slot0.kI = 0.0;
-    config.Slot0.kD = 0.5;
-    config.Slot0.kS = 0.4;
-    config.Slot0.kV = 0.4; // Feedforward gain, tune as needed
+      // Configure PID gains for velocity control
+      config.Slot0.kP = 4; // Example value, tune as needed
+      config.Slot0.kI = 0.0;
+      config.Slot0.kD = 0.5;
+      config.Slot0.kS = 0.4;
+      config.Slot0.kV = 0.4; // Feedforward gain, tune as needed
 
-    // Set Motion Magic parameters (if using Motion Magic)
-    config.MotionMagic.MotionMagicCruiseVelocity = 20; // RPS
-    config.MotionMagic.MotionMagicAcceleration = 40; // rot per sec³
+      // Set Motion Magic parameters (if using Motion Magic)
+      config.MotionMagic.MotionMagicCruiseVelocity = 20; // RPS
+      config.MotionMagic.MotionMagicAcceleration = 40; // rot per sec³
 
-    // Configure current limits
-    // config.CurrentLimits.SupplyCurrentLimit = 40.0; // Amps
-    // config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimit = 80;
-
-    } 
+      // Configure current limits
+      // config.CurrentLimits.SupplyCurrentLimit = 40.0; // Amps
+      // config.CurrentLimits.SupplyCurrentLimitEnable = true;
+      config.CurrentLimits.StatorCurrentLimitEnable = true;
+      config.CurrentLimits.StatorCurrentLimit = 80;
+    }
   }
 
   public class FlyWheelSimConstants {
@@ -79,35 +80,35 @@ public class FlyWheelConstants {
         LinearSystemId.createFlywheelSystem(GEAR_BOX, J, GEAR_RATIO);
 
     public static final TalonFXConfiguration config = new TalonFXConfiguration();
+
     static {
 
-    // Set brake mode to hold position when no power is applied
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      // Set brake mode to hold position when no power is applied
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    // Invert motor direction if necessary
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      // Invert motor direction if necessary
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    // Set gear ratio: Sensor to mechanism and rotor to sensor
-    config.Feedback.SensorToMechanismRatio = 5; // Example gear ratio
-    config.Feedback.RotorToSensorRatio = 1.0; // Default for integrated sensor
+      // Set gear ratio: Sensor to mechanism and rotor to sensor
+      config.Feedback.SensorToMechanismRatio = 5; // Example gear ratio
+      config.Feedback.RotorToSensorRatio = 1.0; // Default for integrated sensor
 
-    // Configure PID gains for velocity control
-    config.Slot0.kP = 4; // Example value, tune as needed
-    config.Slot0.kI = 0.0;
-    config.Slot0.kD = 0.5;
-    config.Slot0.kS = 0.4;
-    config.Slot0.kV = 0.4; // Feedforward gain, tune as needed
+      // Configure PID gains for velocity control
+      config.Slot0.kP = 4; // Example value, tune as needed
+      config.Slot0.kI = 0.0;
+      config.Slot0.kD = 0.5;
+      config.Slot0.kS = 0.4;
+      config.Slot0.kV = 0.4; // Feedforward gain, tune as needed
 
-    // Set Motion Magic parameters (if using Motion Magic)
-    config.MotionMagic.MotionMagicCruiseVelocity = 20; // RPS
-    config.MotionMagic.MotionMagicAcceleration = 40; // rot per sec³
+      // Set Motion Magic parameters (if using Motion Magic)
+      config.MotionMagic.MotionMagicCruiseVelocity = 20; // RPS
+      config.MotionMagic.MotionMagicAcceleration = 40; // rot per sec³
 
-    // Configure current limits
-    // config.CurrentLimits.SupplyCurrentLimit = 40.0; // Amps
-    // config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimit = 80;
-
-    } 
+      // Configure current limits
+      // config.CurrentLimits.SupplyCurrentLimit = 40.0; // Amps
+      // config.CurrentLimits.SupplyCurrentLimitEnable = true;
+      config.CurrentLimits.StatorCurrentLimitEnable = true;
+      config.CurrentLimits.StatorCurrentLimit = 80;
+    }
   }
 }
